@@ -1,0 +1,4 @@
+month;totalRecords;arrivalOnTime;arrivalDelays;departureOnTime;departureDelays;cancellations;diversions
+01;30;14;16;5;25;0;0
+month;totalRecords;arrivalOnTime;arrivalDelays;departureOnTime;departureDelays;cancellations;diversions
+12;26;13;13;7;19;0;1

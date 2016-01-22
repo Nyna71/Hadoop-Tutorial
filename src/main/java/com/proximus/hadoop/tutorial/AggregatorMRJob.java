@@ -1,7 +1,6 @@
 package com.proximus.hadoop.tutorial;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -11,6 +10,12 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apress.prohadoop.utils.AirlineDataUtils;
 
+/**
+ * A Class that groups the Mapper and Reducer Classes used to aggregate Airline statistics.
+ * In this set-up, Mapper and Reducer classes have to be declared as static.
+ *  * @author Jonathan Puvilland
+ *
+ */
 public class AggregatorMRJob {
 	public static final IntWritable RECORD = new IntWritable(0);
 	public static final IntWritable ARRIVAL_DELAY = new IntWritable(1);
@@ -58,13 +63,13 @@ public class AggregatorMRJob {
 	{
 		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
 		{
-			double totalRecords = 0;
-			double arrivalOnTime = 0;
-			double arrivalDelays = 0;
-			double departureOnTime = 0;
-			double departureDelays = 0;
-			double cancellations = 0;
-			double diversions = 0;
+			int totalRecords = 0;
+			int arrivalOnTime = 0;
+			int arrivalDelays = 0;
+			int departureOnTime = 0;
+			int departureDelays = 0;
+			int cancellations = 0;
+			int diversions = 0;
 
 			for(IntWritable value : values)
 			{
@@ -78,16 +83,15 @@ public class AggregatorMRJob {
 			}
 			
 			//Prepare and produce output
-			DecimalFormat df = new DecimalFormat( "0.0000" );
 
 			StringBuilder output = new StringBuilder(key.toString());
 			output.append(";").append(totalRecords);
-			output.append(";").append(df.format(arrivalOnTime/totalRecords));
-			output.append(";").append(df.format(arrivalDelays/totalRecords));
-			output.append(";").append(df.format(departureOnTime/totalRecords));
-			output.append(";").append(df.format(departureDelays/totalRecords));
-			output.append(";").append(df.format(cancellations/totalRecords));
-			output.append(";").append(df.format(diversions/totalRecords));
+			output.append(";").append(arrivalOnTime);
+			output.append(";").append(arrivalDelays);
+			output.append(";").append(departureOnTime);
+			output.append(";").append(departureDelays);
+			output.append(";").append(cancellations);
+			output.append(";").append(diversions);
 			
 			context.write(NullWritable.get(), new Text(output.toString()));
 		}

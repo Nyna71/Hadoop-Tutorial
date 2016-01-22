@@ -1,7 +1,6 @@
 package com.proximus.hadoop.tutorial;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -17,9 +16,17 @@ import org.apache.hadoop.util.ToolRunner;
 
 import com.proximus.hadoop.tutorial.AggregatorMRJob.AggregatorMapper;
 import com.proximus.hadoop.tutorial.AggregatorMRJob.AggregatorReducer;
+import com.proximus.hadoop.tutorial.AggregatorWithCombinerMRJob.AggregatorCombiner;
 
-public class AggregatorWithCombiner extends Configured implements Tool {
+public class AggregatorWithCombiner implements Tool {
 	private static Configuration conf;
+	
+	public static void main(String[] args) throws Exception {
+		conf = new Configuration();
+
+		int status = ToolRunner.run(new AggregatorWithCombiner(), args);
+		System.exit(status);
+	}
 
 	@Override
 	public int run(String[] allArgs) throws Exception {
@@ -32,6 +39,7 @@ public class AggregatorWithCombiner extends Configured implements Tool {
 	    job.setOutputKeyClass(NullWritable.class);
 	    job.setOutputValueClass(Text.class);
 	    job.setMapperClass(AggregatorMapper.class);
+	    job.setCombinerClass(AggregatorCombiner.class);
 	    job.setReducerClass(AggregatorReducer.class);
 	    job.setNumReduceTasks(1);
 	    
@@ -39,22 +47,23 @@ public class AggregatorWithCombiner extends Configured implements Tool {
 	    FileInputFormat.setInputPaths(job, new Path(args[0]));
 	    FileOutputFormat.setOutputPath(job, new Path(args[1]));
 	    
+	    System.out.println("Aggregator With Combiner");
 	    System.out.println("Input Path: " + args[0]);
 	    System.out.println("Output Path: " + args[1]);
 	    
 	    boolean status = job.waitForCompletion(true);
 	    
-	    if(status)
-	    	return 0;
-	    else
-	    	return 1;
+	    return status ? 0 : 1;
 	}
 
-	public static void main(String[] args) throws Exception {
-		conf = new Configuration();
+	@Override
+	public Configuration getConf() {
+		return conf;
+	}
 
-		int status = ToolRunner.run(new Aggregator(), args);
-		System.exit(status);
+	@Override
+	public void setConf(Configuration conf) {
+		// TODO Auto-generated method stub
 	}
 
 }
